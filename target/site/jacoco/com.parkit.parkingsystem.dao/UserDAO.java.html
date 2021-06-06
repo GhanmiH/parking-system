@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">parking-system</a> &gt; <a href="index.source.html" class="el_package">com.parkit.parkingsystem.dao</a> &gt; <span class="el_source">UserDAO.java</span></div><h1>UserDAO.java</h1><pre class="source lang-java linenums">package com.parkit.parkingsystem.dao;
+
+import com.parkit.parkingsystem.config.DataBaseConfig;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import com.parkit.parkingsystem.constants.DBConstants;
+import com.parkit.parkingsystem.model.Userrec;
+
+<span class="nc" id="L14">public class UserDAO {</span>
+
+<span class="fc" id="L16">	private static final Logger logger = LogManager.getLogger(&quot;UserDAO&quot;);</span>
+
+<span class="fc" id="L18">	public static final DataBaseConfig dataBaseConfig = new DataBaseConfig();</span>
+
+	public static boolean saveUser(Userrec userrec) {
+<span class="nc" id="L21">		Connection con = null;</span>
+
+		try {
+<span class="nc" id="L24">			con = dataBaseConfig.getConnection();</span>
+<span class="nc" id="L25">			PreparedStatement ps = con.prepareStatement(DBConstants.SAVE_USERREC);</span>
+
+<span class="nc" id="L27">			ps.setString(1, userrec.getlicenPlaNumber());</span>
+<span class="nc" id="L28">			return ps.execute();</span>
+
+<span class="nc" id="L30">		} catch (Exception ex) {</span>
+<span class="nc" id="L31">			logger.error(&quot;Error fetching next available slot&quot;, ex);</span>
+		} finally {
+<span class="nc" id="L33">			dataBaseConfig.closeConnection(con);</span>
+<span class="nc" id="L34">			return false;</span>
+
+		}
+	}
+
+	public static Userrec getUser(String licenPlaNumber) {
+<span class="fc" id="L40">		Connection con = null;</span>
+<span class="fc" id="L41">		Userrec userrec = null;</span>
+		try {
+<span class="fc" id="L43">			con = dataBaseConfig.getConnection();</span>
+<span class="fc" id="L44">			PreparedStatement ps = con.prepareStatement(DBConstants.GET_USERREC);</span>
+<span class="fc" id="L45">			ps.setString(1, licenPlaNumber);</span>
+<span class="fc" id="L46">			ResultSet rs = ps.executeQuery();</span>
+<span class="pc bpc" id="L47" title="1 of 2 branches missed.">			if (rs.next()) {</span>
+<span class="fc" id="L48">				userrec = new Userrec();</span>
+<span class="fc" id="L49">				userrec.setlicenPlaNumber(licenPlaNumber);</span>
+
+			}
+
+<span class="fc" id="L53">			dataBaseConfig.closeResultSet(rs);</span>
+<span class="fc" id="L54">			dataBaseConfig.closePreparedStatement(ps);</span>
+
+<span class="nc" id="L56">		} catch (Exception ex) {</span>
+<span class="nc" id="L57">			logger.error(&quot;Error fetching next available slot&quot;, ex);</span>
+		} finally {
+<span class="pc" id="L59">			dataBaseConfig.closeConnection(con);</span>
+<span class="pc" id="L60">			return userrec;</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
